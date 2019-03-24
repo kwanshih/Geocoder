@@ -15,7 +15,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     var location: CLLocation?
     
     @IBOutlet weak var locationLabel: UILabel!
-    @IBOutlet weak var locationTextview: UITextView!
+    @IBOutlet weak var locationTextView: UITextView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,33 +30,24 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let curLocation = locations.last else { return }
-        print("lon:\(curLocation.coordinate.longitude) la:\(curLocation.coordinate.latitude)")
         locationLabel.text = "lon:\(curLocation.coordinate.longitude) la:\(curLocation.coordinate.latitude)";
         self.location = curLocation;
     }
     
     func geocoder() {
         if let location = self.location {
-            let geocoder = CLGeocoder()
-            geocoder.reverseGeocodeLocation(location) { (placemarks, error) in
-                
+            CLGeocoder().reverseGeocodeLocation(location) { (placemarks, error) in
                 if let _ = error {
-                    self.locationTextview.text = error?.localizedDescription
+                    self.locationTextView.text = error?.localizedDescription
                 }
                 
                 if let placemarks = placemarks, placemarks.count > 0 {
                     guard let placemark = placemarks.last else { return }
-                    print(placemark.country ?? "")
-                    print(placemark.locality ?? "")
-                    print(placemark.administrativeArea ?? "")
-                    DispatchQueue.main.async {
-                        self.locationTextview.text = """
-                        country:\(placemark.country ?? "")
-                        locality:\(placemark.locality ?? "")
-                        administrativeArea:\(placemark.administrativeArea ?? "")
-                        """
-                    }
-                    
+                    self.locationTextView.text = """
+                    country:\(placemark.country ?? "")
+                    locality:\(placemark.locality ?? "")
+                    administrativeArea:\(placemark.administrativeArea ?? "")
+                    """
                 }
             }
         }
